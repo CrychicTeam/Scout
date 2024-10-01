@@ -10,6 +10,7 @@ import net.minecraft.core.NonNullList;
 
 import org.spongepowered.asm.mixin.Dynamic;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -62,9 +63,10 @@ public abstract class ScreenHandlerMixin {
 	@Shadow
 	public abstract ItemStack getCarried();
 
-	// This method needs to be implemented or imported from somewhere
-	private static boolean canItemQuickReplace(Slot slot, ItemStack stack, boolean stackSizeMatters) {
+	@Overwrite
+	public static boolean canItemQuickReplace(Slot slot, ItemStack stack, boolean stackSizeMatters) {
 		// Implementation here
 		return false;
 	}
+
 }

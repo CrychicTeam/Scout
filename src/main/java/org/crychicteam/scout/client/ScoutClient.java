@@ -2,8 +2,7 @@ package org.crychicteam.scout.client;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
-import net.minecraft.client.model.PlayerModel;
-import net.minecraft.client.renderer.entity.LivingEntityRenderer;
+import net.minecraft.client.renderer.entity.player.PlayerRenderer;
 import net.minecraft.core.NonNullList;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -40,12 +39,6 @@ import java.util.function.Supplier;
 @OnlyIn(Dist.CLIENT)
 public class ScoutClient {
 	private static final String PROTOCOL_VERSION = "1";
-	public static final SimpleChannel INSTANCE = NetworkRegistry.newSimpleChannel(
-			ScoutNetworking.ENABLE_SLOTS,
-			() -> PROTOCOL_VERSION,
-			PROTOCOL_VERSION::equals,
-			PROTOCOL_VERSION::equals
-	);
 
 	public static void init() {
 		IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
@@ -56,23 +49,28 @@ public class ScoutClient {
 
 		MinecraftForge.EVENT_BUS.addListener(ScoutClient::onScreenInit);
 
-		INSTANCE.registerMessage(0, Void.class, (msg, buf) -> {}, buf -> null, ScoutClient::handleEnableSlots);
+		ScoutNetworking.INSTANCE.registerMessage(0, Void.class, (msg, buf) -> {}, buf -> null, ScoutClient::handleEnableSlots);
 	}
 
 	private static void clientSetup(final FMLClientSetupEvent event) {}
 
 	private static void registerEntityRenderers(EntityRenderersEvent.AddLayers event) {
 		for (String skinName : event.getSkins()) {
-			LivingEntityRenderer<? extends Player, ? extends PlayerModel<? extends Player>> renderer = event.getSkin(skinName);
+			PlayerRenderer renderer = event.getSkin(skinName);
 			if (renderer != null) {
-				renderer.addLayer(new PouchFeatureRenderer<>(
-						renderer,
-						Minecraft.getInstance().getEntityRenderDispatcher().getItemInHandRenderer()
-				));
-				renderer.addLayer(new SatchelFeatureRenderer<>(renderer));
+				addFeatureRenderers(renderer);
 			}
 		}
 	}
+
+	private static void addFeatureRenderers(PlayerRenderer renderer) {
+		renderer.addLayer(new PouchFeatureRenderer<>(
+				renderer,
+				Minecraft.getInstance().getEntityRenderDispatcher().getItemInHandRenderer()
+		));
+		renderer.addLayer(new SatchelFeatureRenderer<>(renderer));
+	}
+
 
 	private static void registerTooltipFactories(RegisterClientTooltipComponentFactoriesEvent event) {
 		event.register(BagTooltipData.class, BagTooltipComponent::new);
@@ -81,7 +79,7 @@ public class ScoutClient {
 	private static void onScreenInit(ScreenEvent.Init.Post event) {
 		if (event.getScreen() instanceof AbstractContainerScreen<?> containerScreen && Minecraft.getInstance().player != null) {
 			if (ScoutUtilClient.isScreenBlacklisted(event.getScreen())) {
-				for (Slot slot : ScoutUtil.getAllBagSlots((Player) Minecraft.getInstance().getCameraEntity())) {
+				for (Slot slot : ScoutUtil.getAllBagSlots((Player) Minecraft.getInstance().player)) {
 					BagSlot bagSlot = (BagSlot) slot;
 					bagSlot.setX(Integer.MAX_VALUE);
 					bagSlot.setY(Integer.MAX_VALUE);
@@ -102,7 +100,7 @@ public class ScoutClient {
 			if (hotbarSlot1 != null) {
 				if (!hotbarSlot1.isActive()) {
 					for (int i = 0; i < ScoutUtil.MAX_SATCHEL_SLOTS; i++) {
-						BagSlot slot = (BagSlot) ScoutUtil.getBagSlot(ScoutUtil.SATCHEL_SLOT_START - i, (Player) Minecraft.getInstance().getCameraEntity());
+						BagSlot slot = (BagSlot) ScoutUtil.getBagSlot(ScoutUtil.SATCHEL_SLOT_START - i, Minecraft.getInstance().player);
 						if (slot != null) {
 							slot.setX(Integer.MAX_VALUE);
 							slot.setY(Integer.MAX_VALUE);
@@ -117,7 +115,7 @@ public class ScoutClient {
 							x = hotbarSlot1.x;
 						}
 
-						BagSlot slot = (BagSlot) ScoutUtil.getBagSlot(ScoutUtil.SATCHEL_SLOT_START - i, (Player) Minecraft.getInstance().getCameraEntity());
+						BagSlot slot = (BagSlot) ScoutUtil.getBagSlot(ScoutUtil.SATCHEL_SLOT_START - i, Minecraft.getInstance().player);
 						if (slot != null) {
 							slot.setX(x);
 							slot.setY(y);
@@ -139,7 +137,7 @@ public class ScoutClient {
 			if (topLeftSlot != null) {
 				if (!topLeftSlot.isActive()) {
 					for (int i = 0; i < ScoutUtil.MAX_POUCH_SLOTS; i++) {
-						BagSlot slot = (BagSlot) ScoutUtil.getBagSlot(ScoutUtil.LEFT_POUCH_SLOT_START - i, (Player) Minecraft.getInstance().getCameraEntity());
+						BagSlot slot = (BagSlot) ScoutUtil.getBagSlot(ScoutUtil.LEFT_POUCH_SLOT_START - i, Minecraft.getInstance().player);
 						if (slot != null) {
 							slot.setX(Integer.MAX_VALUE);
 							slot.setY(Integer.MAX_VALUE);
@@ -155,7 +153,7 @@ public class ScoutClient {
 							y += 54;
 						}
 
-						BagSlot slot = (BagSlot) ScoutUtil.getBagSlot(ScoutUtil.LEFT_POUCH_SLOT_START - i, (Player) Minecraft.getInstance().getCameraEntity());
+						BagSlot slot = (BagSlot) ScoutUtil.getBagSlot(ScoutUtil.LEFT_POUCH_SLOT_START - i, Minecraft.getInstance().player);
 						if (slot != null) {
 							slot.setX(x);
 							slot.setY(y);
@@ -173,7 +171,7 @@ public class ScoutClient {
 			if (topRightSlot != null) {
 				if (!topLeftSlot.isActive()) {
 					for (int i = 0; i < ScoutUtil.MAX_POUCH_SLOTS; i++) {
-						BagSlot slot = (BagSlot) ScoutUtil.getBagSlot(ScoutUtil.RIGHT_POUCH_SLOT_START - i, (Player) Minecraft.getInstance().getCameraEntity());
+						BagSlot slot = (BagSlot) ScoutUtil.getBagSlot(ScoutUtil.RIGHT_POUCH_SLOT_START - i, Minecraft.getInstance().player);
 						if (slot != null) {
 							slot.setX(Integer.MAX_VALUE);
 							slot.setY(Integer.MAX_VALUE);
@@ -189,7 +187,7 @@ public class ScoutClient {
 							y += 54;
 						}
 
-						BagSlot slot = (BagSlot) ScoutUtil.getBagSlot(ScoutUtil.RIGHT_POUCH_SLOT_START - i, (Player) Minecraft.getInstance().getCameraEntity());
+						BagSlot slot = (BagSlot) ScoutUtil.getBagSlot(ScoutUtil.RIGHT_POUCH_SLOT_START - i, Minecraft.getInstance().player);
 						if (slot != null) {
 							slot.setX(x);
 							slot.setY(y);

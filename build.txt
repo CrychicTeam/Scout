@@ -1,5 +1,6 @@
 # Mod Info
-mod_version=20.1.9
+enable_annotation=false
+mod_version=20.1.10
 build_candidate=false
 
 # Mod dependencies (jei is not a requirement, but HammerLib is)

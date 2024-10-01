@@ -1,14 +1,30 @@
 {
  "required": true,
  "minVersion": "0.8.5",
- "package": "org.zeith.modid.mixins",
+ "package": "org.crychicteam.scout.mixin",
  "refmap": "mixins.modid.refmap.json",
  "target": "@env(DEFAULT)",
  "compatibilityLevel": "JAVA_17",
  "mixins": [
+  "BowItemMixin",
+  "InventoryMenuMixin",
+  "PlayerMixin",
+  "ScreenHandlerMixin",
+  "ServerPlayerMixin",
+  "ShulkerBoxSlotMixin"
  ],
  "client": [
+  "client.AbstractContainerMenuMixin",
+  "client.AbstractContainerScreenAccessor",
+  "client.AbstractContainerScreenMixin",
+  "client.AbstractFurnaceScreenMixin",
+  "client.CraftingScreenMixin",
+  "client.InventoryScreenMixin",
+  "client.NonNullListMixin",
+  "client.RecipeBookComponentMixin"
  ],
  "server": [
+  "server.AbstractContainerMenuMixin",
+  "server.NonNullListMixin"
  ]
 }

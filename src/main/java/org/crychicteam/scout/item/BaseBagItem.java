@@ -64,12 +64,12 @@ public class BaseBagItem extends Item implements ICurioItem {
 		ItemStackHandler handler = new ItemStackHandler(this.slots) {
 			@Override
 			protected void onContentsChanged(int slot) {
-				CompoundTag compound = stack.getOrCreateTag();
+				CompoundTag compound = stack.get().getOrCreateTag();
 				compound.put(ITEMS_KEY, this.serializeNBT());
 			}
 		};
 
-		CompoundTag compound = stack.getOrCreateTag();
+		CompoundTag compound = stack.get().getOrCreateTag();
 		if (compound.contains(ITEMS_KEY)) {
 			handler.deserializeNBT(compound.getCompound(ITEMS_KEY));
 		}
@@ -91,14 +91,36 @@ public class BaseBagItem extends Item implements ICurioItem {
 
 	private void updateSlots(Player player) {
 		player.getCapability(ForgeCapabilities.ITEM_HANDLER).ifPresent(inventory -> {
-			// 更新槽位逻辑
-			// 这里可以添加更新玩家物品栏的具体逻辑
+			boolean hasSatchel = false;
+			boolean hasLeftPouch = false;
+			boolean hasRightPouch = false;
+			int satchelSlots = 0;
+			int leftPouchSlots = 0;
+			int rightPouchSlots = 0;
 
-			// 发送网络包更新客户端
-			if (!player.level().isClientSide) {
+			Optional<ItemStack> satchelStack = ScoutUtil.findBagItem(player, BagType.SATCHEL, false);
+			if (!satchelStack.get().isEmpty()) {
+				hasSatchel = true;
+				satchelSlots = ((BaseBagItem)satchelStack.get().getItem()).getSlotCount();
+			}
+
+			Optional<ItemStack> leftPouchStack = ScoutUtil.findBagItem(player, BagType.POUCH, false);
+			if (!leftPouchStack.isEmpty()) {
+				hasLeftPouch = true;
+				leftPouchSlots = ((BaseBagItem)leftPouchStack.get().getItem()).getSlotCount();
+			}
+
+			Optional<ItemStack> rightPouchStack = ScoutUtil.findBagItem(player, BagType.POUCH, true);
+			if (!rightPouchStack.isEmpty()) {
+				hasRightPouch = true;
+				rightPouchSlots = ((BaseBagItem)rightPouchStack.get().getItem()).getSlotCount();
+			}
+
+			if (!player.level().isClientSide && player instanceof ServerPlayer serverPlayer) {
 				ScoutNetworking.INSTANCE.send(
-						PacketDistributor.PLAYER.with(() -> (ServerPlayer) player),
-						new UpdateSlotsPacket(/* 需要的数据 */)
+						PacketDistributor.PLAYER.with(() -> serverPlayer),
+						new UpdateSlotsPacket(hasSatchel, hasLeftPouch, hasRightPouch,
+								satchelSlots, leftPouchSlots, rightPouchSlots)
 				);
 			}
 		});

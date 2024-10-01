@@ -21,7 +21,7 @@ import java.util.Optional;
 public class BowItemMixin {
 	@Inject(method = "releaseUsing", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/Level;playSound(Lnet/minecraft/world/entity/player/Player;DDDLnet/minecraft/sounds/SoundEvent;Lnet/minecraft/sounds/SoundSource;FF)V"), locals = LocalCapture.CAPTURE_FAILHARD)
 	public void scout$arrowsFromBags(ItemStack stack, Level level, LivingEntity livingEntity, int remainingUseTicks, CallbackInfo ci, Player player, boolean flag, ItemStack itemstack, int i, float f) {
-		if (ScoutConfig.useArrows) {
+		if (ScoutConfig.useArrows()) {
 			boolean infinity = flag && itemstack.is(net.minecraft.world.item.Items.ARROW);
 			boolean hasRan = false;
 

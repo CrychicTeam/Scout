@@ -41,7 +41,7 @@ public class BagSlot extends Slot {
 
 		if (stack.getItem() instanceof BlockItem blockItem) {
 			if (blockItem.getBlock() instanceof ShulkerBoxBlock)
-				return active && inventory != null && ScoutConfig.allowShulkers;
+				return active && inventory != null && ScoutConfig.allowShulkers();
 		}
 
 		return active && inventory != null;

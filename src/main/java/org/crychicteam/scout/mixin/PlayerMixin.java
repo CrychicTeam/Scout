@@ -20,7 +20,7 @@ import java.util.function.Predicate;
 public class PlayerMixin {
 	@Inject(method = "getProjectile", at = @At(value = "INVOKE_ASSIGN", target = "Lnet/minecraft/world/item/ProjectileWeaponItem;getSupportedHeldProjectiles()Ljava/util/function/Predicate;"), locals = LocalCapture.CAPTURE_FAILHARD, cancellable = true)
 	public void scout$arrowsFromBags(ItemStack pShootable, CallbackInfoReturnable<ItemStack> predicate) {
-		if (ScoutConfig.useArrows) {
+		if (ScoutConfig.useArrows()) {
 			ServerPlayer self = (ServerPlayer) (Object) this;
 			Optional<ItemStack> leftPouch = ScoutUtil.findBagItem(self, BaseBagItem.BagType.POUCH, false);
 			Optional<ItemStack> rightPouch = ScoutUtil.findBagItem(self, BaseBagItem.BagType.POUCH, true);

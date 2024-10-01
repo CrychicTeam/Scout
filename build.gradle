@@ -190,7 +190,9 @@ dependencies {
         implementation fg.deobf("top.theillusivec4.curios:curios-forge:${config.curios_version}")
     }
 
-    annotationProcessor("org.spongepowered:mixin:0.8.7:processor")
+    if (hasConfig("enable_annotation") && Boolean.parseBoolean(config.enable_annotation)) {
+        annotationProcessor("org.spongepowered:mixin:0.8.7:processor")
+    }
 
     def libraries = new File(file("libraries"), "${config.mc_version}")
     if (!libraries.isDirectory()) libraries.mkdirs()

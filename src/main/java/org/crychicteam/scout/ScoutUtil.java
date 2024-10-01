@@ -2,25 +2,21 @@ package org.crychicteam.scout;
 
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.tags.TagKey;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.InventoryMenu;
+import net.minecraft.world.inventory.PlayerEnderChestContainer;
+import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.inventory.Slot;
+import org.crychicteam.scout.item.BaseBagItem;
+import org.crychicteam.scout.item.BaseBagItem.BagType;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.crychicteam.scout.item.BaseBagItem;
-import org.crychicteam.scout.item.BaseBagItem.BagType;
-import oshi.util.tuples.Pair;
+import net.minecraft.util.Mth;
 import top.theillusivec4.curios.api.CuriosApi;
-import top.theillusivec4.curios.api.SlotContext;
-import top.theillusivec4.curios.api.type.inventory.ICurioStacksHandler;
-import top.theillusivec4.curios.api.type.inventory.IDynamicStackHandler;
-import top.theillusivec4.curios.common.inventory.CurioSlot;
 
-import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -58,7 +54,7 @@ public class ScoutUtil {
 	}
 
 	private static boolean isRightPouch(ItemStack stack) {
-		return false;
+		return true;
 	}
 
 	public static void inventoryFromTag(net.minecraft.nbt.CompoundTag tag, String identifier, Player player) {
@@ -69,67 +65,36 @@ public class ScoutUtil {
 		});
 	}
 
-	public static boolean isBagSlot(int slotIndex) {
-		return slotIndex <= SATCHEL_SLOT_START && slotIndex > BAG_SLOTS_END;
+	public static boolean isBagSlot(int slot) {
+		return slot <= SATCHEL_SLOT_START && slot > BAG_SLOTS_END;
 	}
 
 	@Nullable
-	public static Slot getBagSlot(int slotIndex, Player player) {
-		return CuriosApi.getCuriosInventory(player).resolve()
-				.flatMap(inventory -> {
-					String identifier;
-					if (slotIndex <= SATCHEL_SLOT_START && slotIndex > LEFT_POUCH_SLOT_START) {
-						identifier = "satchel";
-					} else if (slotIndex <= LEFT_POUCH_SLOT_START && slotIndex > RIGHT_POUCH_SLOT_START) {
-						identifier = "left_pouch";
-					} else if (slotIndex <= RIGHT_POUCH_SLOT_START && slotIndex > BAG_SLOTS_END) {
-						identifier = "right_pouch";
-					} else {
-						return Optional.empty();
-					}
-					return inventory.getStacksHandler(identifier)
-							.map(handler -> new AbstractMap.SimpleEntry<>(identifier, handler));
-				})
-				.flatMap(entry -> {
-					String identifier = entry.getKey();
-					ICurioStacksHandler handler = entry.getValue();
-					int realSlot = Math.abs(slotIndex - getSlotStart(slotIndex));
-					IDynamicStackHandler stacks = handler.getStacks();
-					if (realSlot < stacks.getSlots()) {
-						return Optional.of(new CurioSlot(
-								player,
-								stacks,
-								realSlot,
-								identifier,
-								0, 0,
-								handler.getRenders(),
-								handler.canToggleRendering(),
-								false,
-								false
-						));
-					}
-					return Optional.empty();
-				})
-				.orElse(null);
-	}
-
-	private static int getSlotStart(int slotIndex) {
-		if (slotIndex <= SATCHEL_SLOT_START && slotIndex > LEFT_POUCH_SLOT_START) {
-			return SATCHEL_SLOT_START;
-		} else if (slotIndex <= LEFT_POUCH_SLOT_START && slotIndex > RIGHT_POUCH_SLOT_START) {
-			return LEFT_POUCH_SLOT_START;
+	public static Slot getBagSlot(int slot, InventoryMenu playerScreenHandler) {
+		ScoutScreenHandler scoutScreenHandler = (ScoutScreenHandler) playerScreenHandler;
+		if (slot <= SATCHEL_SLOT_START && slot > LEFT_POUCH_SLOT_START) {
+			int realSlot = Mth.abs(slot - SATCHEL_SLOT_START);
+			var slots = scoutScreenHandler.scout$getSatchelSlots();
+			return realSlot < slots.size() ? slots.get(realSlot) : null;
+		} else if (slot <= LEFT_POUCH_SLOT_START && slot > RIGHT_POUCH_SLOT_START) {
+			int realSlot = Mth.abs(slot - LEFT_POUCH_SLOT_START);
+			var slots = scoutScreenHandler.scout$getLeftPouchSlots();
+			return realSlot < slots.size() ? slots.get(realSlot) : null;
+		} else if (slot <= RIGHT_POUCH_SLOT_START && slot > BAG_SLOTS_END) {
+			int realSlot = Mth.abs(slot - RIGHT_POUCH_SLOT_START);
+			var slots = scoutScreenHandler.scout$getRightPouchSlots();
+			return realSlot < slots.size() ? slots.get(realSlot) : null;
 		} else {
-			return RIGHT_POUCH_SLOT_START;
+			return null;
 		}
 	}
 
-	public static List<Slot> getAllBagSlots(Player player) {
-		List<Slot> slots = new ArrayList<>();
-		CuriosApi.getCuriosInventory(player).ifPresent(inventory -> {
-			inventory.getStacksHandler("satchel").ifPresent(handler -> slots.addAll(new ArrayList<>(handler.getSlots())));
-			inventory.getStacksHandler("left_pouch").ifPresent(handler -> slots.addAll(new ArrayList<>(handler.getSlots())));
-			inventory.getStacksHandler("right_pouch").ifPresent(handler -> slots.addAll(new ArrayList<>(handler.getSlots())));
-		});
-		return slots;
+	public static List<Slot> getAllBagSlots(InventoryMenu playerScreenHandler) {
+		ScoutScreenHandler scoutScreenHandler = (ScoutScreenHandler) playerScreenHandler;
+		List<Slot> out = new ArrayList<>(TOTAL_SLOTS);
+		out.addAll(scoutScreenHandler.scout$getSatchelSlots());
+		out.addAll(scoutScreenHandler.scout$getLeftPouchSlots());
+		out.addAll(scoutScreenHandler.scout$getRightPouchSlots());
+		return out;
 	}
 }

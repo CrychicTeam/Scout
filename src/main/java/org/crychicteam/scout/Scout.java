@@ -19,18 +19,18 @@ public class Scout {
 
 	public Scout() {
 		IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
-		bus.addListener(this::setup);
-		bus.addListener(this::clientSetup);
+//		bus.addListener(this::setup);
+//		bus.addListener(this::clientSetup);
 		ScoutItems.register();
-		ScoutConfig.register(ModLoadingContext.get());
+//		ScoutConfig.register(ModLoadingContext.get());
 		MinecraftForge.EVENT_BUS.register(this);
 	}
 
 	private void setup(final FMLCommonSetupEvent event) {
-		ScoutNetworking.init();
+//		ScoutNetworking.init();
 	}
 
 	private void clientSetup(final FMLClientSetupEvent event) {
-		ScoutClient.init();
+//		ScoutClient.init();
 	}
 }

@@ -60,6 +60,8 @@ minecraft {
             workingDirectory project.file('run/client')
             property 'forge.logging.console.level', 'debug'
             property 'forge.enabledGameTestNamespaces', config.mod_id
+            property 'mixin.env.remapRefMap', 'true'
+            property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
             def args = new ArrayList()
 
             args.add "--mixin"
@@ -89,7 +91,8 @@ minecraft {
             workingDirectory project.file('run/server')
             property 'forge.logging.console.level', 'debug'
             property 'forge.enabledGameTestNamespaces', config.mod_id
-            property 'mixin.env.disableRefMap', 'true'
+            property 'mixin.env.remapRefMap', 'true'
+            property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
             def args = new ArrayList()
             args.add "--mixin"
             args.add "mixins.${config.mod_id}.json"
@@ -105,7 +108,8 @@ minecraft {
             workingDirectory project.file('run/server')
             property 'forge.logging.console.level', 'debug'
             property 'forge.enabledGameTestNamespaces', config.mod_id
-            property 'mixin.env.disableRefMap', 'true'
+            property 'mixin.env.remapRefMap', 'true'
+            property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
             def args = new ArrayList()
             args.add "--mixin"
             args.add "mixins.${config.mod_id}.json"
@@ -121,7 +125,8 @@ minecraft {
             workingDirectory project.file('run/client')
             property 'forge.logging.console.level', 'debug'
             property 'forge.enabledGameTestNamespaces', config.mod_id
-            property 'mixin.env.disableRefMap', 'true'
+            property 'mixin.env.remapRefMap', 'true'
+            property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
             def args = new ArrayList()
             args.add "--mixin"
             args.add "mixins.${config.mod_id}.json"
@@ -140,7 +145,7 @@ sourceSets.main.resources { srcDir 'src/generated/resources' }
 repositories {
     maven {
         name = "Jared's maven"
-        url = "https://maven.blamejared.com/" // location of the maven that hosts JEI files since January 2023
+        url = "https://maven.blamejared.com/"
         content {
             includeGroupByRegex "mezz\\.jei.*"
         }
@@ -188,6 +193,7 @@ dependencies {
 
     if (hasConfig("curios_version") && !config.curios_version.isEmpty()) {
         implementation fg.deobf("top.theillusivec4.curios:curios-forge:${config.curios_version}")
+        runtimeOnly fg.deobf("top.theillusivec4.curios:curios-forge:${config.curios_version}")
     }
 
     if (hasConfig("enable_annotation") && Boolean.parseBoolean(config.enable_annotation)) {

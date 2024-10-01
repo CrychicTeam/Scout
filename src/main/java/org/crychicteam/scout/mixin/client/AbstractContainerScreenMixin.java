@@ -23,19 +23,31 @@ import java.util.Optional;
 @OnlyIn(Dist.CLIENT)
 @Mixin(AbstractContainerScreen.class)
 public abstract class AbstractContainerScreenMixin<T extends AbstractContainerMenu> extends Screen {
-    @Shadow protected int leftPos;
-    @Shadow protected int topPos;
-    @Shadow protected int imageWidth;
-    @Shadow protected int imageHeight;
+
+    @Shadow
+    protected int leftPos;
+
+    @Shadow
+    protected int topPos;
+
+    @Shadow
+    protected int imageWidth;
+
+    @Shadow
+    protected int imageHeight;
+
     @Final
-    @Shadow protected T menu;
-    @Shadow @javax.annotation.Nullable protected Slot hoveredSlot;
+    @Shadow
+    protected T menu;
+
+    @Shadow
+    protected Slot hoveredSlot;
 
     protected AbstractContainerScreenMixin(net.minecraft.network.chat.Component pTitle) {
         super(pTitle);
     }
 
-    @Inject(method = "render", at = @At("TAIL")) // 在原始渲染逻辑之后执行自定义渲染
+    @Inject(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screens/inventory/AbstractContainerScreen;renderBg(Lnet/minecraft/client/gui/GuiGraphics;FII)V", shift = At.Shift.AFTER))
     private void scout$drawSatchelRow(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick, CallbackInfo ci) {
         if (this.minecraft != null && this.minecraft.player != null && !ScoutUtilClient.isScreenBlacklisted((AbstractContainerScreen<?>) (Object) this)) {
             var playerInventory = this.minecraft.player.getInventory();

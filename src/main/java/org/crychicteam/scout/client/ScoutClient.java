@@ -7,6 +7,7 @@ import net.minecraft.core.NonNullList;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
@@ -77,9 +78,9 @@ public class ScoutClient {
 	}
 
 	private static void onScreenInit(ScreenEvent.Init.Post event) {
-		if (event.getScreen() instanceof AbstractContainerScreen<?> containerScreen && Minecraft.getInstance().player != null) {
+		if (event.getScreen() instanceof AbstractContainerScreen<?> containerScreen && Minecraft.getInstance().player.inventoryMenu != null) {
 			if (ScoutUtilClient.isScreenBlacklisted(event.getScreen())) {
-				for (Slot slot : ScoutUtil.getAllBagSlots((Player) Minecraft.getInstance().player)) {
+				for (Slot slot : ScoutUtil.getAllBagSlots(Minecraft.getInstance().player.inventoryMenu)) {
 					BagSlot bagSlot = (BagSlot) slot;
 					bagSlot.setX(Integer.MAX_VALUE);
 					bagSlot.setY(Integer.MAX_VALUE);
@@ -88,7 +89,7 @@ public class ScoutClient {
 			}
 
 			AbstractContainerMenu handler = containerScreen.getMenu();
-			Inventory playerInventory = Minecraft.getInstance().player.getInventory();
+			InventoryMenu playerInventory = Minecraft.getInstance().player.inventoryMenu;
 
 			int x = 0;
 			int y = 0;
@@ -100,7 +101,7 @@ public class ScoutClient {
 			if (hotbarSlot1 != null) {
 				if (!hotbarSlot1.isActive()) {
 					for (int i = 0; i < ScoutUtil.MAX_SATCHEL_SLOTS; i++) {
-						BagSlot slot = (BagSlot) ScoutUtil.getBagSlot(ScoutUtil.SATCHEL_SLOT_START - i, Minecraft.getInstance().player);
+						BagSlot slot = (BagSlot) ScoutUtil.getBagSlot(ScoutUtil.SATCHEL_SLOT_START - i, Minecraft.getInstance().player.inventoryMenu);
 						if (slot != null) {
 							slot.setX(Integer.MAX_VALUE);
 							slot.setY(Integer.MAX_VALUE);
@@ -115,7 +116,7 @@ public class ScoutClient {
 							x = hotbarSlot1.x;
 						}
 
-						BagSlot slot = (BagSlot) ScoutUtil.getBagSlot(ScoutUtil.SATCHEL_SLOT_START - i, Minecraft.getInstance().player);
+						BagSlot slot = (BagSlot) ScoutUtil.getBagSlot(ScoutUtil.SATCHEL_SLOT_START - i, Minecraft.getInstance().player.inventoryMenu);
 						if (slot != null) {
 							slot.setX(x);
 							slot.setY(y);
@@ -137,7 +138,7 @@ public class ScoutClient {
 			if (topLeftSlot != null) {
 				if (!topLeftSlot.isActive()) {
 					for (int i = 0; i < ScoutUtil.MAX_POUCH_SLOTS; i++) {
-						BagSlot slot = (BagSlot) ScoutUtil.getBagSlot(ScoutUtil.LEFT_POUCH_SLOT_START - i, Minecraft.getInstance().player);
+						BagSlot slot = (BagSlot) ScoutUtil.getBagSlot(ScoutUtil.LEFT_POUCH_SLOT_START - i, Minecraft.getInstance().player.inventoryMenu);
 						if (slot != null) {
 							slot.setX(Integer.MAX_VALUE);
 							slot.setY(Integer.MAX_VALUE);
@@ -153,7 +154,7 @@ public class ScoutClient {
 							y += 54;
 						}
 
-						BagSlot slot = (BagSlot) ScoutUtil.getBagSlot(ScoutUtil.LEFT_POUCH_SLOT_START - i, Minecraft.getInstance().player);
+						BagSlot slot = (BagSlot) ScoutUtil.getBagSlot(ScoutUtil.LEFT_POUCH_SLOT_START - i, Minecraft.getInstance().player.inventoryMenu);
 						if (slot != null) {
 							slot.setX(x);
 							slot.setY(y);
@@ -171,7 +172,7 @@ public class ScoutClient {
 			if (topRightSlot != null) {
 				if (!topLeftSlot.isActive()) {
 					for (int i = 0; i < ScoutUtil.MAX_POUCH_SLOTS; i++) {
-						BagSlot slot = (BagSlot) ScoutUtil.getBagSlot(ScoutUtil.RIGHT_POUCH_SLOT_START - i, Minecraft.getInstance().player);
+						BagSlot slot = (BagSlot) ScoutUtil.getBagSlot(ScoutUtil.RIGHT_POUCH_SLOT_START - i, Minecraft.getInstance().player.inventoryMenu);
 						if (slot != null) {
 							slot.setX(Integer.MAX_VALUE);
 							slot.setY(Integer.MAX_VALUE);
@@ -187,7 +188,7 @@ public class ScoutClient {
 							y += 54;
 						}
 
-						BagSlot slot = (BagSlot) ScoutUtil.getBagSlot(ScoutUtil.RIGHT_POUCH_SLOT_START - i, Minecraft.getInstance().player);
+						BagSlot slot = (BagSlot) ScoutUtil.getBagSlot(ScoutUtil.RIGHT_POUCH_SLOT_START - i, Minecraft.getInstance().player.inventoryMenu);
 						if (slot != null) {
 							slot.setX(x);
 							slot.setY(y);

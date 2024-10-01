@@ -20,7 +20,7 @@ public class NonNullListMixin {
 		if (ScoutUtil.isBagSlot(index)) {
 			if (currentPlayer != null) {
 				Player player = currentPlayer;
-				cir.setReturnValue(ScoutUtil.getBagSlot(index, player));
+				cir.setReturnValue(ScoutUtil.getBagSlot(index, player.inventoryMenu));
 			} else {
 				cir.setReturnValue(null);
 			}

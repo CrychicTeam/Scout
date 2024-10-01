@@ -22,7 +22,7 @@ public class BagSlot extends Slot {
 		this.index = index;
 	}
 
-	public void setInventory(ItemStackHandler inventory) {
+    public void setInventory(ItemStackHandler inventory) {
 		this.inventory = inventory;
 	}
 

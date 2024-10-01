@@ -19,7 +19,7 @@ public class NonNullListMixin {
 		var playerScreenHandler = ScoutUtilClient.getClientPlayer();
 		if (ScoutUtil.isBagSlot(index)) {
 			if (playerScreenHandler != null) {
-				cir.setReturnValue(ScoutUtil.getBagSlot(index, playerScreenHandler));
+				cir.setReturnValue(ScoutUtil.getBagSlot(index, playerScreenHandler.inventoryMenu));
 			} else {
 				cir.setReturnValue(null);
 			}

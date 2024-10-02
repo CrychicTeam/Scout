@@ -1,23 +1,21 @@
 package org.crychicteam.scout.item;
 
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.Level;
+import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.ChatFormatting;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.level.Level;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
+import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.items.ItemStackHandler;
 import net.minecraftforge.network.PacketDistributor;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-
 import org.crychicteam.scout.ScoutNetworking;
 import org.crychicteam.scout.ScoutUtil;
 import org.crychicteam.scout.network.UpdateSlotsPacket;
-import top.theillusivec4.curios.api.CuriosApi;
 import top.theillusivec4.curios.api.SlotContext;
 import top.theillusivec4.curios.api.type.capability.ICurioItem;
 
@@ -124,45 +122,6 @@ public class BaseBagItem extends Item implements ICurioItem {
 				);
 			}
 		});
-	}
-
-	@Override
-	public boolean canEquip(SlotContext slotContext, ItemStack stack) {
-		if (!(slotContext.entity() instanceof Player player)) {
-			return false;
-		}
-
-		Optional<ItemStack> existingStack = CuriosApi.getCuriosInventory(slotContext.entity()).resolve()
-				.flatMap(inventory -> inventory.getStacksHandler(slotContext.identifier()).map(handler -> handler.getStacks().getStackInSlot(slotContext.index())));
-		Item existingItem = existingStack.get().getItem();
-
-		if (existingItem instanceof BaseBagItem) {
-			BaseBagItem existingBag = (BaseBagItem) existingItem;
-			BaseBagItem newBag = (BaseBagItem) stack.getItem();
-
-			if (newBag.getType() == BagType.SATCHEL) {
-				if (existingBag.getType() == BagType.SATCHEL) {
-					return true;
-				} else {
-					return ScoutUtil.findBagItem(player, BagType.SATCHEL, false).isEmpty();
-				}
-			} else if (newBag.getType() == BagType.POUCH) {
-				if (existingBag.getType() == BagType.POUCH) {
-					return true;
-				} else {
-					return ScoutUtil.findBagItem(player, BagType.POUCH, true).isEmpty();
-				}
-			}
-		} else {
-			BaseBagItem newBag = (BaseBagItem) stack.getItem();
-			if (newBag.getType() == BagType.SATCHEL) {
-				return ScoutUtil.findBagItem(player, BagType.SATCHEL, false).isEmpty();
-			} else if (newBag.getType() == BagType.POUCH) {
-				return ScoutUtil.findBagItem(player, BagType.POUCH, true).isEmpty();
-			}
-		}
-
-		return false;
 	}
 
 	@Override

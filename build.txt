@@ -1,6 +1,6 @@
 # Mod Info
 enable_annotation=false
-mod_version=20.1.12
+mod_version=20.1.13
 build_candidate=false
 
 # Mod dependencies (jei is not a requirement, but HammerLib is)
@@ -14,7 +14,7 @@ mod_id=scout
 archive_name=CrychicTeam
 mod_name=Scout
 mod_description=Example mod description.\nNewline characters can be used and will be replaced properly.
-mod_authors=Zeitheron
+mod_authors=CrychicTeam
 mod_license=All Rights Reserved
 mod_credits=None
 issue_tracker_url=https://github.com/dragon-forge/HammerLib/issues
@@ -28,7 +28,7 @@ mc_version=1.20.1
 mc_range=[1.20.1,1.21)
 forge_version=47.1.99
 forge_range=[47,)
-mc_user=Zeitheron,63fa4c485b5640809727d5d59663e603
+mc_user=Togawa_Sakiko_,b6a0483d-eaf2-4be6-8395-5eecdaa310a6
 
 # Misc Info
 java=17

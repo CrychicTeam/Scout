@@ -10,7 +10,9 @@ import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.crychicteam.scout.client.ScoutClient;
 import org.crychicteam.scout.config.ScoutConfig;
+import org.crychicteam.scout.item.BaseBagItem;
 import org.crychicteam.scout.registry.ScoutItems;
+import top.theillusivec4.curios.api.CuriosApi;
 
 @Mod(Scout.MOD_ID)
 public class Scout {
@@ -19,18 +21,19 @@ public class Scout {
 
 	public Scout() {
 		IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
-//		bus.addListener(this::setup);
-//		bus.addListener(this::clientSetup);
+		bus.addListener(this::setup);
+		bus.addListener(this::clientSetup);
 		ScoutItems.register();
-//		ScoutConfig.register(ModLoadingContext.get());
+		ScoutConfig.register(ModLoadingContext.get());
 		MinecraftForge.EVENT_BUS.register(this);
 	}
 
 	private void setup(final FMLCommonSetupEvent event) {
-//		ScoutNetworking.init();
+//		CuriosApi.registerCurio(ScoutItems.POUCH, new BaseBagItem());
+		ScoutNetworking.init();
 	}
 
 	private void clientSetup(final FMLClientSetupEvent event) {
-//		ScoutClient.init();
+		ScoutClient.init();
 	}
 }

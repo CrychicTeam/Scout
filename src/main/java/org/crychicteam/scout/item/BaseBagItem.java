@@ -97,19 +97,19 @@ public class BaseBagItem extends Item implements ICurioItem {
 			int rightPouchSlots = 0;
 
 			Optional<ItemStack> satchelStack = ScoutUtil.findBagItem(player, BagType.SATCHEL, false);
-			if (!satchelStack.get().isEmpty()) {
+			if (satchelStack.isPresent()) {
 				hasSatchel = true;
 				satchelSlots = ((BaseBagItem)satchelStack.get().getItem()).getSlotCount();
 			}
 
 			Optional<ItemStack> leftPouchStack = ScoutUtil.findBagItem(player, BagType.POUCH, false);
-			if (!leftPouchStack.isEmpty()) {
+			if (leftPouchStack.isPresent()) {
 				hasLeftPouch = true;
 				leftPouchSlots = ((BaseBagItem)leftPouchStack.get().getItem()).getSlotCount();
 			}
 
 			Optional<ItemStack> rightPouchStack = ScoutUtil.findBagItem(player, BagType.POUCH, true);
-			if (!rightPouchStack.isEmpty()) {
+			if (rightPouchStack.isPresent()) {
 				hasRightPouch = true;
 				rightPouchSlots = ((BaseBagItem)rightPouchStack.get().getItem()).getSlotCount();
 			}
